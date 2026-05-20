@@ -1,518 +1,509 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <meta name="theme-color" content="#0061EB" />
-  <meta name="description" content="NACO HIV/ART Treatment Guidelines — AI Clinical Assistant for Healthcare Providers" />
-  <title>NACO ART Guidelines · AI Assistant</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<meta name="theme-color" content="#0A2540"/>
+<title>NACO ART · Clinical AI Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0A2540;
+  --navy2:#0D2F4E;
+  --blue:#0061EB;
+  --blue-soft:#E8F1FF;
+  --teal:#00897B;
+  --teal-soft:#E0F4F1;
+  --red:#D93025;
+  --amber:#F59E0B;
+  --white:#FFFFFF;
+  --ink:#0D1117;
+  --ink2:#374151;
+  --ink3:#6B7280;
+  --ink4:#9CA3AF;
+  --line:#E5E7EB;
+  --line2:#F3F4F6;
+  --surface:#F9FAFB;
+  --chat-bg:#F4F6F9;
+  --radius:14px;
+  --shadow:0 2px 16px rgba(10,37,64,0.10);
+}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--chat-bg);color:var(--ink);-webkit-font-smoothing:antialiased}
 
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── LAYOUT ── */
+.shell{
+  max-width:480px;
+  margin:0 auto;
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  background:var(--white);
+  position:relative;
+  box-shadow:0 0 60px rgba(10,37,64,0.12);
+}
 
-    :root {
-      --blue:       #0061EB;
-      --blue-dark:  #0050C9;
-      --blue-light: #E6F1FB;
-      --teal:       #0F6E56;
-      --teal-light: #E1F5EE;
-      --text:       #0D1117;
-      --text-2:     #4A5568;
-      --text-3:     #8A9BB0;
-      --border:     rgba(0,0,0,0.08);
-      --surface:    #F7F9FC;
-      --white:      #FFFFFF;
-      --red:        #E24B4A;
-    }
+/* ── HEADER ── */
+header{
+  background:var(--navy);
+  padding:16px 18px 14px;
+  flex-shrink:0;
+  position:relative;
+  overflow:hidden;
+}
+header::after{
+  content:'';
+  position:absolute;
+  top:-60px;right:-60px;
+  width:200px;height:200px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(0,97,235,0.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hdr-row1{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.hdr-avatar{
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,#0061EB 0%,#00C4B4 100%);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.hdr-avatar svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hdr-meta{flex:1;min-width:0}
+.hdr-name{
+  font-family:'Instrument Serif',serif;
+  font-size:17px;color:#fff;
+  line-height:1.2;letter-spacing:0.1px;
+}
+.hdr-sub{font-size:11px;color:rgba(255,255,255,0.55);margin-top:2px;font-weight:500}
+.hdr-status{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:500;color:#4ADE80;
+}
+.dot{width:6px;height:6px;border-radius:50%;background:#4ADE80;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.35}}
 
-    html, body {
-      height: 100%;
-      font-family: 'DM Sans', sans-serif;
-      background: var(--surface);
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
-    }
+/* quick pills */
+.pills{
+  display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;
+  scrollbar-width:none;
+}
+.pills::-webkit-scrollbar{display:none}
+.pill{
+  white-space:nowrap;
+  font-size:11.5px;font-weight:500;
+  color:rgba(255,255,255,0.8);
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:20px;padding:5px 12px;
+  cursor:pointer;flex-shrink:0;
+  transition:background 0.15s,color 0.15s;
+}
+.pill:hover{background:rgba(255,255,255,0.2);color:#fff}
+.pill:active{transform:scale(0.97)}
 
-    /* ── Page layout ── */
-    .page {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+/* ── MESSAGES ── */
+.msgs{
+  flex:1;overflow-y:auto;
+  padding:18px 16px 10px;
+  display:flex;flex-direction:column;gap:14px;
+  scroll-behavior:smooth;
+}
+.msgs::-webkit-scrollbar{width:4px}
+.msgs::-webkit-scrollbar-track{background:transparent}
+.msgs::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
 
-    /* ── Top bar ── */
-    .topbar {
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      padding: 0 20px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+/* date divider */
+.divider{
+  display:flex;align-items:center;gap:10px;
+  font-size:10.5px;font-weight:500;color:var(--ink4);
+  text-transform:uppercase;letter-spacing:0.6px;
+  margin:4px 0;
+}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--line)}
 
-    .topbar-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+/* message row */
+.msg-row{display:flex;flex-direction:column;animation:msgIn 0.22s ease both}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg-row.bot{align-self:flex-start;max-width:88%}
+.msg-row.user{align-self:flex-end;max-width:84%}
 
-    .brand-icon {
-      width: 32px;
-      height: 32px;
-      background: var(--blue);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+.sender{
+  font-size:10px;font-weight:600;
+  letter-spacing:0.4px;text-transform:uppercase;
+  margin-bottom:4px;padding:0 4px;
+  color:var(--ink3);
+}
+.msg-row.bot .sender{color:var(--blue)}
 
-    .brand-icon svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.bubble{
+  padding:11px 14px;
+  font-size:14px;line-height:1.6;
+  color:var(--ink);
+}
+.msg-row.bot .bubble{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:4px 16px 16px 16px;
+}
+.msg-row.user .bubble{
+  background:var(--navy);
+  color:#fff;
+  border-radius:16px 4px 16px 16px;
+  font-size:13.5px;
+}
 
-    .brand-name {
-      font-family: 'Sora', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.2px;
-    }
+/* reference tag */
+.ref-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10.5px;font-weight:500;
+  color:var(--teal);
+  background:var(--teal-soft);
+  border:1px solid rgba(0,137,123,0.2);
+  border-radius:20px;padding:3px 9px;
+  margin-top:6px;
+}
+.ref-tag svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-    .brand-name span { color: var(--blue); }
+.ts{
+  font-size:10px;color:var(--ink4);
+  margin-top:4px;padding:0 4px;
+}
+.msg-row.user .ts{text-align:right}
 
-    .topbar-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--teal);
-      background: var(--teal-light);
-      border: 1px solid rgba(15,110,86,0.15);
-      border-radius: 20px;
-      padding: 4px 10px;
-    }
+/* typing */
+.typing-row{display:flex;flex-direction:column;align-self:flex-start;max-width:88%}
+.typing-bubble{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:4px 16px 16px 16px;
+  padding:13px 16px;
+  display:flex;align-items:center;gap:5px;
+}
+.typing-bubble span{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--blue);opacity:0.3;
+  animation:typingDot 1.3s infinite;
+}
+.typing-bubble span:nth-child(2){animation-delay:0.18s}
+.typing-bubble span:nth-child(3){animation-delay:0.36s}
+@keyframes typingDot{0%,80%,100%{transform:scale(0.8);opacity:0.25}40%{transform:scale(1.15);opacity:1}}
 
-    .status-dot {
-      width: 6px; height: 6px;
-      background: #22c55e;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
+/* error */
+.err-bubble{
+  background:#FEF2F2;border:1px solid rgba(217,48,37,0.2);
+  border-radius:4px 16px 16px 16px;
+  padding:11px 14px;font-size:13px;color:var(--red);
+}
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.4; }
-    }
+/* ── SUGGESTED (empty state) ── */
+.suggestions{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:8px;margin-top:6px;
+}
+.sug-card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:12px;padding:12px 11px;
+  cursor:pointer;
+  transition:border-color 0.15s,box-shadow 0.15s,transform 0.12s;
+  text-align:left;
+}
+.sug-card:hover{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.sug-card:active{transform:scale(0.97)}
+.sug-icon{
+  width:28px;height:28px;border-radius:8px;
+  background:var(--blue-soft);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:8px;
+}
+.sug-icon svg{width:14px;height:14px;fill:none;stroke:var(--blue);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sug-text{font-size:12px;font-weight:500;color:var(--ink2);line-height:1.4}
 
-    /* ── Hero strip ── */
-    .hero {
-      background: var(--blue);
-      padding: 28px 20px 24px;
-      position: relative;
-      overflow: hidden;
-    }
+/* ── INPUT AREA ── */
+.input-wrap{
+  border-top:1px solid var(--line);
+  background:var(--white);
+  padding:12px 14px 14px;
+  flex-shrink:0;
+}
+.input-row{
+  display:flex;align-items:flex-end;
+  gap:10px;
+  background:var(--surface);
+  border:1.5px solid var(--line);
+  border-radius:24px;
+  padding:8px 8px 8px 16px;
+  transition:border-color 0.15s,box-shadow 0.15s;
+}
+.input-row:focus-within{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px var(--blue-soft);
+}
+#inp{
+  flex:1;border:none;outline:none;
+  background:transparent;
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;color:var(--ink);
+  line-height:1.45;resize:none;
+  max-height:120px;min-height:24px;
+}
+#inp::placeholder{color:var(--ink4)}
+#send{
+  width:36px;height:36px;border-radius:50%;border:none;
+  background:var(--blue);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;
+  transition:background 0.15s,transform 0.1s;
+}
+#send:hover{background:var(--navy)}
+#send:active{transform:scale(0.92)}
+#send:disabled{background:var(--line);cursor:not-allowed}
+#send svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.input-hint{
+  font-size:10.5px;color:var(--ink4);
+  text-align:center;margin-top:8px;
+}
 
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -40px; right: -40px;
-      width: 200px; height: 200px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-    }
-
-    .hero::after {
-      content: '';
-      position: absolute;
-      bottom: -60px; left: -30px;
-      width: 180px; height: 180px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.04);
-    }
-
-    .hero-label {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 6px;
-    }
-
-    .hero-title {
-      font-family: 'Sora', sans-serif;
-      font-size: 22px;
-      font-weight: 600;
-      color: #fff;
-      line-height: 1.25;
-      margin-bottom: 8px;
-    }
-
-    .hero-sub {
-      font-size: 13px;
-      color: rgba(255,255,255,0.72);
-      line-height: 1.5;
-      max-width: 340px;
-    }
-
-    .hero-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 16px;
-    }
-
-    .hero-chip {
-      font-size: 11px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.85);
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 20px;
-      padding: 4px 10px;
-    }
-
-    /* ── Main content ── */
-    .main { flex: 1; padding: 20px 16px 100px; }
-
-    /* ── Info cards ── */
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .info-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-    }
-
-    .info-card-icon {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 8px;
-    }
-
-    .info-card-icon svg { width: 16px; height: 16px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-    .info-card-icon.blue { background: var(--blue-light); }
-    .info-card-icon.blue svg { stroke: var(--blue); }
-    .info-card-icon.teal { background: var(--teal-light); }
-    .info-card-icon.teal svg { stroke: var(--teal); }
-
-    .info-card-label {
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--text-3);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 2px;
-    }
-
-    .info-card-value {
-      font-family: 'Sora', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.3;
-    }
-
-    /* ── Section heading ── */
-    .section-head {
-      font-size: 11px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-3);
-      margin: 0 0 10px;
-    }
-
-    /* ── Quick topics ── */
-    .topics-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-bottom: 24px;
-    }
-
-    .topic-btn {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 12px;
-      text-align: left;
-      cursor: pointer;
-      transition: border-color 0.15s, box-shadow 0.15s;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-    }
-
-    .topic-btn:hover {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(0,97,235,0.08);
-    }
-
-    .topic-btn:active { transform: scale(0.98); }
-
-    .topic-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--blue);
-      flex-shrink: 0;
-      margin-top: 5px;
-    }
-
-    .topic-text {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text);
-      line-height: 1.4;
-    }
-
-    /* ── Disclaimer ── */
-    .disclaimer {
-      background: #FFF8E7;
-      border: 1px solid rgba(186,117,23,0.2);
-      border-radius: 10px;
-      padding: 12px 14px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      margin-bottom: 20px;
-    }
-
-    .disclaimer-icon { flex-shrink: 0; margin-top: 1px; }
-    .disclaimer-icon svg { width: 16px; height: 16px; fill: none; stroke: #BA7517; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-    .disclaimer p {
-      font-size: 11.5px;
-      color: #633806;
-      line-height: 1.5;
-    }
-
-    .disclaimer strong { font-weight: 600; }
-
-    /* ── Footer ── */
-    .footer {
-      background: var(--white);
-      border-top: 1px solid var(--border);
-      padding: 14px 20px;
-      text-align: center;
-    }
-
-    .footer p {
-      font-size: 11px;
-      color: var(--text-3);
-      line-height: 1.6;
-    }
-
-    .footer a { color: var(--blue); text-decoration: none; }
-
-    /* ── DO chatbot widget override ── */
-    /* Forces widget button to bottom-right on mobile */
-    #chatbot-container { position: relative; }
-
-    /* ── Animations ── */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(12px);
-      animation: fadeUp 0.4s ease forwards;
-    }
-
-    @keyframes fadeUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .fade-up:nth-child(1) { animation-delay: 0.05s; }
-    .fade-up:nth-child(2) { animation-delay: 0.12s; }
-    .fade-up:nth-child(3) { animation-delay: 0.18s; }
-    .fade-up:nth-child(4) { animation-delay: 0.24s; }
-
-    @media (min-width: 480px) {
-      .hero-title { font-size: 26px; }
-      .main { padding: 24px 24px 100px; }
-    }
-  </style>
+/* ── EMPTY STATE ── */
+.empty-state{
+  flex:1;display:flex;flex-direction:column;
+  align-items:flex-start;
+  padding:24px 16px 10px;
+  animation:msgIn 0.3s ease both;
+}
+.empty-greeting{
+  font-family:'Instrument Serif',serif;
+  font-size:22px;color:var(--navy);
+  line-height:1.25;margin-bottom:6px;
+}
+.empty-greeting em{font-style:italic;color:var(--blue)}
+.empty-sub{
+  font-size:13px;color:var(--ink3);
+  line-height:1.55;margin-bottom:20px;max-width:320px;
+}
+.empty-label{
+  font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.7px;
+  color:var(--ink4);margin-bottom:10px;
+}
+</style>
 </head>
 <body>
+<div class="shell">
 
-<div class="page">
-
-  <!-- Top bar -->
-  <header class="topbar">
-    <div class="topbar-brand">
-      <div class="brand-icon">
+  <!-- HEADER -->
+  <header>
+    <div class="hdr-row1">
+      <div class="hdr-avatar">
         <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
       </div>
-      <span class="brand-name">NACO <span>ART</span> Guidelines</span>
+      <div class="hdr-meta">
+        <div class="hdr-name">NACO ART Guidelines</div>
+        <div class="hdr-sub">Clinical AI Assistant · HIV/ART Treatment</div>
+      </div>
+      <div class="hdr-status"><div class="dot"></div>Online</div>
     </div>
-    <div class="topbar-badge">
-      <div class="status-dot"></div>
-      AI Online
+    <div class="pills" id="pills">
+      <button class="pill" onclick="quickAsk('What are NACO first-line ART regimens?')">First-line ART</button>
+      <button class="pill" onclick="quickAsk('Explain the TLD regimen dosing and eligibility.')">TLD regimen</button>
+      <button class="pill" onclick="quickAsk('How to manage ART treatment failure?')">Treatment failure</button>
+      <button class="pill" onclick="quickAsk('OI prophylaxis guidelines for PLHIV?')">OI prophylaxis</button>
+      <button class="pill" onclick="quickAsk('ART in pregnancy and PPTCT protocol?')">Pregnancy</button>
+      <button class="pill" onclick="quickAsk('TB-HIV co-infection management per NACO?')">TB-HIV</button>
+      <button class="pill" onclick="quickAsk('Viral load monitoring schedule per NACO?')">Viral load</button>
+      <button class="pill" onclick="quickAsk('Drug interactions and toxicity in ART?')">Drug toxicity</button>
     </div>
   </header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <p class="hero-label">Clinical Decision Support</p>
-    <h1 class="hero-title">HIV/ART Treatment<br>Guidelines Assistant</h1>
-    <p class="hero-sub">AI-powered clinical support based on NACO ART Treatment Guidelines — for healthcare providers, ART counselors &amp; ICTC staff.</p>
-    <div class="hero-chips">
-      <span class="hero-chip">NACO Guidelines 2021</span>
-      <span class="hero-chip">RAG-powered PDF</span>
-      <span class="hero-chip">For Providers Only</span>
-    </div>
-  </section>
-
-  <!-- Main -->
-  <main class="main">
-
-    <!-- Info cards -->
-    <div class="info-grid">
-      <div class="info-card fade-up">
-        <div class="info-card-icon blue">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        </div>
-        <div class="info-card-label">Knowledge base</div>
-        <div class="info-card-value">NACO ART PDF Guidelines</div>
-      </div>
-      <div class="info-card fade-up">
-        <div class="info-card-icon teal">
-          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div class="info-card-label">Intended for</div>
-        <div class="info-card-value">Healthcare Providers</div>
+  <!-- MESSAGES or EMPTY STATE -->
+  <div class="msgs" id="msgs">
+    <div class="empty-state" id="emptyState">
+      <p class="empty-greeting">Hello, <em>Doctor.</em><br>How can I help?</p>
+      <p class="empty-sub">Ask me anything about HIV/ART treatment, drug regimens, monitoring protocols, or clinical management — all based on the NACO Guidelines.</p>
+      <p class="empty-label">Suggested questions</p>
+      <div class="suggestions">
+        <button class="sug-card" onclick="quickAsk('What are NACO first-line ART regimens for adults?')">
+          <div class="sug-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9S3 16.97 3 12 7.03 3 12 3s9 4.03 9 9z"/></svg></div>
+          <div class="sug-text">First-line ART regimens</div>
+        </button>
+        <button class="sug-card" onclick="quickAsk('Explain TLD regimen — dosing, eligibility and monitoring.')">
+          <div class="sug-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <div class="sug-text">TLD regimen & dosing</div>
+        </button>
+        <button class="sug-card" onclick="quickAsk('How do I identify and manage virological treatment failure?')">
+          <div class="sug-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="sug-text">Treatment failure</div>
+        </button>
+        <button class="sug-card" onclick="quickAsk('CD4 count and viral load monitoring schedule per NACO guidelines?')">
+          <div class="sug-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <div class="sug-text">CD4 & viral load monitoring</div>
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Quick topics -->
-    <p class="section-head">Quick topics</p>
-    <div class="topics-grid">
-      <button class="topic-btn fade-up" onclick="openChat('What are the first-line ART regimens recommended by NACO?')">
-        <div class="topic-dot"></div>
-        <span class="topic-text">First-line ART regimens</span>
-      </button>
-      <button class="topic-btn fade-up" onclick="openChat('Explain the TLD regimen — dosing, eligibility and monitoring.')">
-        <div class="topic-dot"></div>
-        <span class="topic-text">TLD regimen &amp; dosing</span>
-      </button>
-      <button class="topic-btn fade-up" onclick="openChat('How do I manage treatment failure — clinical, immunological and virological?')">
-        <div class="topic-dot"></div>
-        <span class="topic-text">Treatment failure</span>
-      </button>
-      <button class="topic-btn fade-up" onclick="openChat('What are the OI prophylaxis guidelines for PLHIV?')">
-        <div class="topic-dot"></div>
-        <span class="topic-text">OI prophylaxis</span>
-      </button>
-      <button class="topic-btn fade-up" onclick="openChat('ART guidelines during pregnancy and PPTCT protocol.')">
-        <div class="topic-dot"></div>
-        <span class="topic-text">Pregnancy &amp; PPTCT</span>
-      </button>
-      <button class="topic-btn fade-up" onclick="openChat('How to manage TB-HIV co-infection per NACO guidelines?')">
-        <div class="topic-dot"></div>
-        <span class="topic-text">TB-HIV co-infection</span>
-      </button>
-      <button class="topic-btn fade-up" onclick="openChat('What is the viral load monitoring schedule per NACO?')">
-        <div class="topic-dot"></div>
-        <span class="topic-text">Viral load monitoring</span>
-      </button>
-      <button class="topic-btn fade-up" onclick="openChat('Drug interactions and toxicity management in ART.')">
-        <div class="topic-dot"></div>
-        <span class="topic-text">Drug interactions</span>
+  <!-- INPUT -->
+  <div class="input-wrap">
+    <div class="input-row">
+      <textarea id="inp" rows="1" placeholder="Ask about ART regimens, dosing, monitoring…"></textarea>
+      <button id="send" onclick="sendMsg()" aria-label="Send">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
-
-    <!-- Disclaimer -->
-    <div class="disclaimer fade-up">
-      <div class="disclaimer-icon">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      </div>
-      <p><strong>For licensed healthcare providers only.</strong> This assistant provides guideline-based clinical decision support and does not replace professional clinical judgment. Always verify with current NACO guidelines and specialist opinion where indicated.</p>
-    </div>
-
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <p>
-      Powered by <a href="https://www.naco.gov.in" target="_blank" rel="noopener">NACO</a> ART Treatment Guidelines &amp; DigitalOcean AI Platform<br>
-      &copy; 2025 · For healthcare provider use only
-    </p>
-  </footer>
+    <div class="input-hint">For licensed healthcare providers · Based on NACO ART Guidelines 2021</div>
+  </div>
 
 </div>
 
-<!--
-  ╔══════════════════════════════════════════════════════════════╗
-  ║  DIGITAL OCEAN AI AGENT — CHATBOT WIDGET                    ║
-  ║  This widget connects to your DO agent which has the        ║
-  ║  NACO PDF knowledge base attached. No API key needed        ║
-  ║  in this file — DO handles auth via the public endpoint.    ║
-  ╚══════════════════════════════════════════════════════════════╝
--->
-<script
-  async
-  src="https://y5nfohqywl7goi3c3oo6tlun.agents.do-ai.run/static/chatbot/widget.js"
-  data-agent-id="d341e7db-c93c-11f0-b074-4e013e2ddde4"
-  data-chatbot-id="00BWaSBj1zPXAgNs5ghdFN_uHRc3OLTO"
-  data-name="NACO ART Guidelines AI"
-  data-primary-color="#5ea0ed"
-  data-secondary-color="#E5E8ED"
-  data-button-background-color="#0061EB"
-  data-starting-message="Hello! I'm your NACO ART Guidelines assistant. Ask me about ART regimens, drug dosing, treatment failure, OI prophylaxis, TB-HIV co-infection, or any other clinical question based on the NACO Treatment Guidelines."
-  data-logo="/static/chatbot/icons/default-agent.svg">
-</script>
-
 <script>
-  /**
-   * openChat(message)
-   * Waits for the DO widget to mount, then programmatically
-   * opens it and pre-fills the message.
-   */
-  function openChat(message) {
-    const tryOpen = (attempts) => {
-      // The DO widget renders a button — click it to open the chat panel
-      const btn = document.querySelector(
-        '[class*="chatbot-button"], [id*="chatbot"], button[aria-label*="chat" i], button[aria-label*="Chat" i]'
-      );
+/* ── CONFIG ── */
+// Replace YOUR_ACCESS_KEY_HERE with your actual DO agent access key
+// Get it from: DO Control Panel → your agent → Overview → Create Access Key
+const DO_ENDPOINT = 'https://y5nfohqywl7goi3c3oo6tlun.agents.do-ai.run/api/v1/chat/completions';
+const DO_KEY      = 'YOUR_ACCESS_KEY_HERE';
 
-      if (btn) {
-        btn.click();
-        // After a brief delay, try to find the input and prefill
-        setTimeout(() => {
-          const input = document.querySelector(
-            'input[placeholder*="message" i], textarea[placeholder*="message" i], input[type="text"]'
-          );
-          if (input) {
-            input.value = message;
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-            input.focus();
-          }
-        }, 400);
-        return;
-      }
+/* ── STATE ── */
+const history = [];
+let busy = false;
 
-      if (attempts > 0) {
-        setTimeout(() => tryOpen(attempts - 1), 300);
-      }
-    };
-    tryOpen(10);
+/* ── ELEMENTS ── */
+const msgsEl   = document.getElementById('msgs');
+const inpEl    = document.getElementById('inp');
+const sendBtn  = document.getElementById('send');
+const emptyEl  = document.getElementById('emptyState');
+
+/* ── HELPERS ── */
+function now(){
+  return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+}
+
+function removeEmpty(){
+  if(emptyEl && emptyEl.parentNode){emptyEl.remove()}
+}
+
+function addDivider(){
+  const d=document.createElement('div');
+  d.className='divider';
+  d.textContent='Today';
+  msgsEl.appendChild(d);
+}
+
+function appendUser(text){
+  removeEmpty();
+  if(msgsEl.querySelectorAll('.msg-row').length===0) addDivider();
+  const row=document.createElement('div');
+  row.className='msg-row user';
+  row.innerHTML=`<div class="bubble">${escHtml(text)}</div><div class="ts">${now()}</div>`;
+  msgsEl.appendChild(row);
+  scroll();
+}
+
+function appendBot(text){
+  const row=document.createElement('div');
+  row.className='msg-row bot';
+  // Convert simple markdown-like formatting
+  const formatted=text
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\n/g,'<br>');
+  row.innerHTML=`
+    <div class="sender">NACO AI Assistant</div>
+    <div class="bubble">${formatted}</div>
+    <div class="ref-tag">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      NACO ART Guidelines 2021
+    </div>
+    <div class="ts">${now()}</div>`;
+  msgsEl.appendChild(row);
+  scroll();
+}
+
+function showTyping(){
+  const row=document.createElement('div');
+  row.className='typing-row';row.id='typing';
+  row.innerHTML=`<div class="sender">NACO AI Assistant</div><div class="typing-bubble"><span></span><span></span><span></span></div>`;
+  msgsEl.appendChild(row);scroll();
+}
+function hideTyping(){const t=document.getElementById('typing');if(t)t.remove()}
+
+function showError(msg){
+  const row=document.createElement('div');
+  row.className='msg-row bot';
+  row.innerHTML=`<div class="sender">NACO AI Assistant</div><div class="err-bubble">${msg}</div><div class="ts">${now()}</div>`;
+  msgsEl.appendChild(row);scroll();
+}
+
+function scroll(){msgsEl.scrollTop=msgsEl.scrollHeight}
+function escHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function setUI(loading){
+  busy=loading;
+  sendBtn.disabled=loading;
+  inpEl.disabled=loading;
+}
+
+/* ── SEND ── */
+async function sendMsg(){
+  const text=inpEl.value.trim();
+  if(!text||busy)return;
+  inpEl.value='';inpEl.style.height='auto';
+
+  appendUser(text);
+  history.push({role:'user',content:text});
+  setUI(true);showTyping();
+
+  try{
+    const res=await fetch(DO_ENDPOINT,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':`Bearer ${DO_KEY}`
+      },
+      body:JSON.stringify({
+        messages:history,
+        stream:false
+      })
+    });
+
+    if(!res.ok){
+      const err=await res.text();
+      throw new Error(`HTTP ${res.status}: ${err}`);
+    }
+
+    const data=await res.json();
+    const reply=data.choices?.[0]?.message?.content||'No response received. Please try again.';
+    hideTyping();
+    history.push({role:'assistant',content:reply});
+    appendBot(reply);
+
+  }catch(e){
+    hideTyping();
+    console.error(e);
+    if(e.message.includes('401')||e.message.includes('403')){
+      showError('⚠️ Access key missing or invalid. Open the HTML file and replace <code>YOUR_ACCESS_KEY_HERE</code> with your Digital Ocean agent access key.');
+    } else if(e.message.includes('Failed to fetch')||e.message.includes('NetworkError')){
+      showError('⚠️ Network error — check your internet connection and that the DO agent endpoint is set to Public.');
+    } else {
+      showError('⚠️ Something went wrong. Please try again in a moment.');
+    }
   }
-</script>
 
+  setUI(false);inpEl.focus();
+}
+
+function quickAsk(q){
+  inpEl.value=q;
+  sendMsg();
+}
+
+/* ── AUTO-RESIZE TEXTAREA ── */
+inpEl.addEventListener('input',()=>{
+  inpEl.style.height='auto';
+  inpEl.style.height=Math.min(inpEl.scrollHeight,120)+'px';
+});
+inpEl.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}
+});
+</script>
 </body>
 </html>
